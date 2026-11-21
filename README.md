@@ -4,7 +4,23 @@ Mobile-first storefront and owner-console prototype for Sahasram, built with HTM
 
 ## Run locally
 
-Open `dist/index.html` through any static web server. The site has no build-time dependencies. `src/` contains the editable source; `dist/` is the deployable static site.
+Run `npm run build`, then open `dist/index.html` through any static web server. The site has no build-time dependencies. `src/` contains the editable source; `dist/` is the generated static site and is not committed.
+
+## Deploy
+
+Every push to `main` publishes the storefront to GitHub Pages through `.github/workflows/pages.yml`. The workflow runs `npm run build:public`, which leaves out the owner console (`admin.html`, `styles.css`, `src/admin.js`) because it has no login yet.
+
+All links are relative, so the site works at a sub-path such as `username.github.io/sahasram/` or on a custom domain.
+
+## Storefront design
+
+The storefront (`index.html`, `store.css`, `src/app.js`) follows the Sahasram design boards: the mobile web prototype and the shopper-storefront wireframes. The owner console (`admin.html`) still uses `styles.css`.
+
+Photos load by name from `assets/products/` and `assets/home/`. Until a file exists, its slot shows a tonal placeholder in the garment's colour. See `assets/README.md` for the list of file names.
+
+The anniversary offer (bar, hero slide, offer prices, bag discount) appears only while `endsAt` in `api.getOffer()` is in the future. After that the site switches to a plain free-shipping bar.
+
+Routes: `#shop/<kurta-sets|sarees|kurtas|kids|anarkalis|new|window|handpicked|offers|all>`, `#shop/style/<anarkali|ajrakh|pin-tuck|kutch|embroidered|silk|kaftan>`, `#shop/occasion/<name>`, `#shop/price/<min>-<max>`, `#shop/size/<label>`, `#product/<id>`, `#search/<query>`, `#page/<key>`.
 
 ## Demo data and backend connection
 

@@ -3,94 +3,391 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f7f4ee" />
-  <meta name="description" content="Thoughtfully chosen Indian wear from Sahasram, a clothing studio in KPHB Colony, Hyderabad." />
+  <meta name="theme-color" content="#7A1F2B" />
+  <meta name="description" content="Sahasram — a clothing studio in KPHB Colony, Hyderabad. Kurta sets, anarkalis, sarees and kids’ festive wear, picked one piece at a time." />
+  <title>Sahasram — Clothing Studio, Hyderabad</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Instrument+Sans:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="store.css" />
+  <script>
+    // Until real photos are dropped into /assets, a missing image falls back to its tonal placeholder.
+    document.addEventListener("error", function (e) { var t = e.target; if (t && t.tagName === "IMG" && t.closest && t.closest(".ph")) { t.closest(".ph").classList.add("ph-empty"); t.remove(); } }, true);
+  </script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"ClothingStore","name":"Sahasram","telephone":"+91-73372-21100","address":{"@type":"PostalAddress","streetAddress":"1st Floor, Krishna Teja Classic, Plot 1247, Road No. 45, KPHB Colony","addressLocality":"Hyderabad","addressRegion":"Telangana","postalCode":"500085","addressCountry":"IN"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"11:00","closes":"22:00"}],"sameAs":["https://www.instagram.com/thesahasramway/"]}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I see a piece before I buy?","acceptedAnswer":{"@type":"Answer","text":"Book a video call and Sahasram can show you the fabric, finish and fit up close."}},{"@type":"Question","name":"How do I choose the right size?","acceptedAnswer":{"@type":"Answer","text":"Use the size guide on each product page, or book a fitting for help choosing."}},{"@type":"Question","name":"Can I pick up my order from the studio?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose studio pickup at checkout and Sahasram will confirm when it is ready."}},{"@type":"Question","name":"Can a piece be altered?","acceptedAnswer":{"@type":"Answer","text":"Many pieces can be altered. Visit the customization page to learn more and book a fitting."}}]}</script>
-  <title>Sahasram — Wear your own story</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Where is Sahasram boutique in Hyderabad?","acceptedAnswer":{"@type":"Answer","text":"On the 1st floor of Krishna Teja Classic, Plot 1247, Road No. 45, KPHB Colony, Hyderabad 500085 — opposite Prajay Megapolis. Call or WhatsApp 73372 21100."}},{"@type":"Question","name":"Can I see a kurta set on a video call before buying?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose up to ten pieces on the website, pick a time, and Sharanya will show them to you on a WhatsApp video call before you decide."}},{"@type":"Question","name":"How much do kurta sets cost at Sahasram?","acceptedAnswer":{"@type":"Answer","text":"Most kurtas start under ₹1,000, and kurta sets range from about ₹1,600 to ₹10,700 for silk occasion sets."}},{"@type":"Question","name":"Do you have kids’ ethnic wear?","acceptedAnswer":{"@type":"Answer","text":"Yes — lehenga-cholis, Nehru jackets, dresses and festive sets for ages 0–8 and up."}}]}</script>
 </head>
 <body>
-  <div class="demo-ribbon"><span class="demo-dot"></span> Preview store · illustrative catalogue and checkout</div>
-  <div class="offer-bar" id="offerBar">
-    <span class="offer-copy"><strong>SAHASRAM TURNS ONE</strong><span>Buy 1 · Get 20% off &nbsp; / &nbsp; Buy 2 · Get 1 free</span></span>
-    <span class="offer-countdown" id="countdown">Offer ends in <b>—</b></span>
-    <a href="#offers" class="offer-link">Explore offer <span>↗</span></a>
-  </div>
-  <header class="site-header">
-    <button class="icon-button menu-toggle" aria-label="Open menu" data-action="menu">☰</button>
-    <a class="brand" href="#home" aria-label="Sahasram home"><span class="brand-mark">S</span><span>SAHASRAM<small>HYDERABAD</small></span></a>
-    <nav class="desktop-nav" aria-label="Main navigation">
-      <a href="#category/Kurta%20Sets">Kurta Sets</a><a href="#category/Sarees">Sarees</a><a href="#customization">Customization</a><a href="#category/Kids">Kids</a>
-      <button class="nav-more" data-action="more">More <span>⌄</span></button>
-    </nav>
-    <div class="header-actions">
-      <button class="icon-button search-toggle" aria-label="Search" data-action="search">⌕</button>
-      <a class="icon-button account-link" href="#account" aria-label="My account">♙</a>
-      <button class="icon-button wishlist-toggle" aria-label="Wishlist" data-action="wishlist">♡</button>
-      <button class="bag-button" data-action="bag" aria-label="Shopping bag">Bag <span class="bag-count" id="bagCount">0</span></button>
+  <a class="skip" href="#view">Skip to content</a>
+
+  <!-- Offer bar -->
+  <a class="offer-bar" href="#shop/offers" data-offer>
+    <div class="wrap offer-inner">
+      <b class="offer-title">SAHASRAM TURNS ONE</b>
+      <span class="offer-copy">Buy 1, get 20% off · Buy 2, get 1 free · till 31 Oct</span>
+      <span class="countdown" id="countdown" aria-label="Offer countdown">
+        <span><b data-cd="d">00</b> days</span><i aria-hidden="true">:</i>
+        <span><b data-cd="h">00</b> hrs</span><i aria-hidden="true">:</i>
+        <span><b data-cd="m">00</b> min</span><i aria-hidden="true">:</i>
+        <span><b data-cd="s">00</b> sec</span>
+      </span>
     </div>
-    <div class="search-box" id="searchBox"><input id="searchInput" aria-label="Search products" placeholder="Search style, colour, fabric or tag code" /><button data-action="search-close" aria-label="Close search">×</button></div>
-    <div class="more-menu" id="moreMenu"><a href="#category/Kurtas">Kurtas</a><a href="#category/Anarkalis">Anarkalis</a><a href="#category/Kids">Kids’ wear</a><a href="#exhibitions">Exhibitions</a><a href="#about">Our story</a></div>
+  </a>
+  <div class="offer-bar offer-bar-quiet" data-no-offer hidden>
+    <div class="wrap offer-inner"><span class="offer-copy">Free shipping above ₹2,999 · See any piece on a WhatsApp video call · Open all days, 11 AM – 10 PM</span></div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" id="top">
+    <div class="wrap header-row">
+      <div class="header-left">
+        <button class="icon-btn only-mobile" data-action="menu" aria-label="Open menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <button class="icon-btn" data-action="search" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span class="only-desktop">Search</span></button>
+      </div>
+      <a class="logo" href="#home" aria-label="Sahasram home">
+        <span class="logo-word">SAHASRAM</span>
+        <span class="logo-sub"><span class="logo-long">CLOTHING STUDIO · </span>HYDERABAD</span>
+      </a>
+      <nav class="header-right" aria-label="Account">
+        <a class="icon-btn only-desktop" href="#page/account">Sign in</a>
+        <button class="icon-btn only-desktop" data-action="wishlist" aria-label="Wishlist"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9-9a4.6 4.6 0 0 1 9-2 4.6 4.6 0 0 1 9 2c-2 4.6-9 9-9 9z"/></svg><span class="count-dot" data-wish-count hidden>0</span></button>
+        <button class="icon-btn" data-action="bag" aria-label="Bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.5 12h-11z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg><span class="count-dot" data-bag-count>0</span></button>
+      </nav>
+    </div>
+    <nav class="wrap main-nav" aria-label="Categories">
+      <a href="#shop/kurta-sets">KURTA SETS</a>
+      <a href="#shop/sarees">SAREES</a>
+      <a href="#page/customization">CUSTOMIZATION</a>
+      <a href="#shop/kids">KIDS</a>
+      <div class="nav-more">
+        <button aria-haspopup="true" data-action="more">MORE <span aria-hidden="true">▾</span></button>
+        <div class="mega" id="mega">
+          <div><b>SHOP</b><a href="#shop/kurtas">Kurtas</a><a href="#shop/anarkalis">Anarkalis</a><a href="#shop/style/kaftan">Kaftans &amp; dresses</a><a href="#shop/all">All pieces</a></div>
+          <div><b>BY OCCASION</b><a href="#shop/occasion/Everyday%20%26%20office">Everyday &amp; office</a><a href="#shop/occasion/Festive">Festive</a><a href="#shop/occasion/Wedding%20guest">Wedding guest</a><a href="#shop/occasion/Kids%E2%80%99%20celebrations">Kids’ celebrations</a></div>
+          <div><b>THE STUDIO</b><a href="#page/about-us">Our story</a><a href="#page/exhibitions">Exhibitions</a><a href="#page/measure">How to measure</a><a href="#page/book-appointment">Book an appointment</a></div>
+        </div>
+      </div>
+      <span class="nav-rule" aria-hidden="true"></span>
+      <a href="#shop/new" class="accent">NEW ARRIVALS</a>
+      <a href="#shop/offers" class="accent" data-offer>OFFERS</a>
+    </nav>
+    <form class="search-bar" id="searchBar" role="search">
+      <div class="wrap search-inner">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="searchInput" type="search" aria-label="Search the store" placeholder="Search kurta sets, colours, ajrakh, tag code…" autocomplete="off" />
+        <button type="button" class="icon-btn" data-action="search-close" aria-label="Close search">✕</button>
+      </div>
+    </form>
   </header>
-  <nav class="category-circles shell" aria-label="Shop categories">
-    <a href="#category/Kurta%20Sets"><span class="circle-thumb thumb-sets"><i></i></span><b>Kurta Sets</b></a>
-    <a href="#category/Sarees"><span class="circle-thumb thumb-saree"><i></i></span><b>Sarees</b></a>
-    <a href="#customization"><span class="circle-thumb thumb-custom"><i>✳</i></span><b>Customize</b></a>
-    <a href="#category/Kids"><span class="circle-thumb thumb-kids"><i></i></span><b>Kids</b></a>
-    <a href="#category/Kurtas"><span class="circle-thumb thumb-kurta"><i></i></span><b>Kurtas</b></a>
-    <a href="#category/Anarkalis"><span class="circle-thumb thumb-anarkali"><i></i></span><b>Anarkalis</b></a>
-    <a href="#category/All%20pieces"><span class="circle-thumb thumb-more"><i>＋</i></span><b>View all</b></a>
-  </nav>
-  <main id="mainContent">
-    <section class="hero shell" id="home">
-      <div class="hero-copy">
-        <p class="eyebrow">A CLOTHING STUDIO IN HYDERABAD</p>
-        <h1>Wear your<br/><em>own story.</em></h1>
-        <p class="hero-sub">Clothes that feel like you. Chosen one piece at a time, from our studio to your wardrobe.</p>
-        <div class="hero-ctas"><a class="button button-dark" href="#category/Kurta%20Sets">Explore the collection <span>↗</span></a><button class="text-button" data-action="book-call">Shop with Sharanya <span>→</span></button></div>
-        <div class="hero-notes"><span><b>01</b> Thoughtful finds</span><span><b>02</b> One-of-a-kind pieces</span><span><b>03</b> Here when you need us</span></div>
-      </div>
-      <div class="hero-art" id="offers" aria-label="Illustrative anniversary collection preview">
-        <div class="hero-sun"></div><div class="hero-fabric fabric-a"></div><div class="hero-fabric fabric-b"></div><div class="hero-fabric fabric-c"></div><div class="hero-orbit"></div>
-        <div class="art-caption"><span>SAHASRAM</span><b>ANNIVERSARY SALE</b><i>BUY 1 GET 20% OFF · BUY 2 GET 1 FREE</i><em>TILL 31 OCTOBER</em><p>Kurta sets, anarkalis & kids’ festive wear</p><a href="#offers">SHOP HERE ›</a></div>
-        <div class="art-stamp">THE<br/>SAHASRAM<br/>WAY</div>
-      </div>
-      <div class="hero-side-note">A little colour, a little craft, a lot of you.</div>
-    </section>
-    <section class="ticker"><div>STUDIO TO YOUR DOOR <span>✳</span> PICKED WITH CARE <span>✳</span> ONE-OF-A-KIND FINDS <span>✳</span> STUDIO TO YOUR DOOR <span>✳</span> PICKED WITH CARE <span>✳</span></div></section>
-    <section class="section shell" id="newArrivalsSection">
-      <div class="section-heading"><div><p class="eyebrow">JUST FOUND AT THE STUDIO</p><h2>New <em>arrivals</em></h2></div><a href="#category/All%20pieces" class="arrow-link">View all <span>↗</span></a></div>
-      <div class="product-grid" id="newArrivalItems"></div>
-    </section>
-    <section class="saree-edit shell" id="sareeEdit"><div class="saree-edit-copy"><p class="eyebrow">NEW AT SAHASRAM</p><h2>The Saree <em>Edit</em></h2><p>Zari-bordered silks and hand-tied bandhani, draped in our Hyderabad studio.</p><a class="button button-light" href="#category/Sarees">Shop sarees <span>↗</span></a></div><div class="saree-edit-items" id="sareeItems"></div></section>
-    <section class="section shell" id="windowSection"><div class="section-heading"><div><p class="eyebrow">ON DISPLAY AT THE STUDIO</p><h2>In our window <em>this week</em></h2></div><a href="#category/All%20pieces" class="arrow-link">Shop before they’re gone <span>↗</span></a></div><div class="window-row" id="windowItems"></div></section>
-    <section class="occasion-band"><div class="shell"><div class="section-heading"><div><p class="eyebrow">SHOP BY OCCASION</p><h2>Made for the <em>moments.</em></h2></div><p class="section-aside">Little things to wear through all of it.</p></div><div class="occasion-grid"><a href="#category/Everyday%20%26%20office"><span>01</span><b>Everyday & office</b><i>↗</i></a><a href="#category/Festive"><span>02</span><b>Festive</b><i>↗</i></a><a href="#category/Wedding%20guest"><span>03</span><b>Wedding guest</b><i>↗</i></a><a href="#category/Kids"><span>04</span><b>Kids’ celebrations</b><i>↗</i></a></div></div></section>
-    <section class="exhibition-list shell" id="exhibitionSection" hidden><div class="section-heading"><div><p class="eyebrow">NEXT UP, OUT OF THE STUDIO</p><h2>Catch us at an <em>exhibition</em></h2></div><a href="#exhibitions" class="arrow-link">All upcoming dates <span>↗</span></a></div><div id="exhibitionCards" class="exhibition-cards"></div><p class="exhibition-city-signup">Want us in your city? <button data-action="city-interest">Tell us where →</button></p></section>
-    <section class="category-feature shell">
-      <div class="category-intro"><p class="eyebrow">FIND YOUR KIND OF COMFORT</p><h2>Good clothes<br/>for <em>real days.</em></h2><p>From work mornings to the last dance at a family celebration, find the piece that feels right.</p><a href="#category/All%20pieces" class="text-button">Browse all pieces <span>→</span></a></div>
-      <div class="category-grid">
-        <a class="category-tile cat-kurta" href="#category/Kurta%20Sets"><span class="tile-index">01 / EVERYDAY TO FESTIVE</span><b>Kurta sets</b><span class="tile-arrow">↗</span></a>
-        <a class="category-tile cat-saree" href="#category/Sarees"><span class="tile-index">02 / DRAPE YOUR WAY</span><b>Sarees</b><span class="tile-arrow">↗</span></a>
-        <a class="category-tile cat-kids" href="#category/Kids"><span class="tile-index">03 / LITTLE CELEBRATIONS</span><b>Kids’ wear</b><span class="tile-arrow">↗</span></a>
-        <a class="category-tile cat-custom" href="#customization"><span class="tile-index">04 / MADE FOR YOU</span><b>Customization</b><span class="tile-arrow">↗</span></a>
-      </div>
-    </section>
-    <section class="section shell" id="handpickedSection">
-      <div class="section-heading"><div><p class="eyebrow">SHARANYA'S NOTES</p><h2>Handpicked <em>with feeling</em></h2></div><p class="section-aside">Pieces we keep coming back to.<br/>Because the little details matter.</p></div>
-      <div class="product-grid" id="productGrid"></div>
-    </section>
-    <section class="story-band" id="about"><div class="story-number">01—03</div><div class="story-content"><p class="eyebrow">FROM OUR STUDIO IN KPHB</p><h2>It should feel<br/><em>like you.</em></h2><p>Sahasram began with a simple thought: getting dressed can feel easy, personal and a little joyful. We bring together pieces that make room for your everyday and the occasions you hold close.</p><a href="#about-us" class="button button-light">Get to know us <span>↗</span></a></div><div class="story-visual"><div class="story-circle circle-1"></div><div class="story-circle circle-2"></div><div class="story-letter">S</div><span>FROM THE STUDIO · WITH CARE</span></div></section>
-    <section class="call-band shell"><div class="call-scribble">A real person.<br/>A real opinion.</div><div><p class="eyebrow">NOT SURE ABOUT THE FIT?</p><h2>Let's find your<br/><em>right piece.</em></h2><p>Book a relaxed video call with Sharanya. Show us what caught your eye; we'll help with colour, fit and styling.</p><button class="button button-dark" data-action="book-call">Book a video call <span>↗</span></button></div><div class="call-meta"><span>NO PRESSURE, JUST GOOD ADVICE</span><span>WHATSAPP VIDEO · GOOGLE MEET</span><span>DAILY · 11 AM–10 PM</span></div></section>
-    <section class="section shell exhibitions" id="exhibitions"><div class="exhibition-art"><span class="eyebrow">WHERE TO FIND US</span><div class="shop-drawing"><div class="shop-roof"></div><div class="shop-sign">SAHASRAM</div><div class="shop-front"><span></span><span></span><span></span></div><div class="shop-door"></div></div><span class="exhibition-note">KPHB COLONY · HYDERABAD</span></div><div class="exhibition-copy"><p class="eyebrow">COME BY WHEN YOU'RE NEAR</p><h2>A warm hello<br/><em>at the studio.</em></h2><p>Browse slowly, try a few things on, or bring someone whose opinion you trust.</p><div class="studio-details"><span><b>OPEN</b> All days · 11 AM–10 PM</span><span><b>FIND US</b> 1st Floor, Krishna Teja Classic, Plot 1247, Road No. 45, KPHB Colony, Hyderabad 500085 · Opp. Prajay Megapolis</span><span><b>CALL / WHATSAPP</b> +91 73372 21100</span></div><div class="button-row"><a class="button button-outline" href="https://maps.google.com/?q=Sahasram+KPHB+Colony+Hyderabad" target="_blank" rel="noreferrer">Get directions <span>↗</span></a><a class="text-button" href="https://wa.me/917337221100?text=Hi%20Sahasram%2C%20I%27d%20love%20to%20visit%20the%20studio." target="_blank" rel="noreferrer">Message us <span>→</span></a></div></div></section>
-    <section class="faq-section"><div class="shell faq-layout"><div><p class="eyebrow">A FEW THINGS YOU MAY WONDER</p><h2>Good to <em>know.</em></h2><p class="section-aside">Still have a question? We’re one WhatsApp message away.</p><a class="text-button" href="https://wa.me/917337221100" target="_blank" rel="noreferrer">Ask us anything <span>→</span></a></div><div class="faq-list"><details><summary>Can I see a piece before I buy? <span>＋</span></summary><p>Of course. Book a video call and we can show you the fabric, finish and fit up close.</p></details><details><summary>How do I choose the right size? <span>＋</span></summary><p>Use the size guide on each product page, or book a fitting and we’ll help you choose.</p></details><details><summary>Can I pick up my order from the studio? <span>＋</span></summary><p>Yes. Choose studio pickup at checkout and we’ll confirm when it is ready.</p></details><details><summary>Can a piece be altered? <span>＋</span></summary><p>Many pieces can be altered. Visit our customization page to see how it works and book a fitting.</p></details></div></div></section>
-    <section class="newsletter shell"><div><p class="eyebrow">A NOTE FROM OUR STUDIO</p><h2>New finds, when<br/><em>they arrive.</em></h2></div><div><p>Leave your number and we’ll let you know about new pieces and studio updates on WhatsApp.</p><form id="newsletterForm" class="newsletter-form"><input type="tel" aria-label="WhatsApp number" placeholder="Your WhatsApp number" required/><button class="button button-dark">Keep me posted <span>↗</span></button></form><small>No spam. Just a note from Sahasram.</small></div></section>
+
+  <main id="view" tabindex="-1">
+    <div id="homeView">
+      <!-- Category circles -->
+      <nav class="cat-rail" aria-label="Shop categories">
+        <a href="#shop/kurta-sets"><span class="ph circle" style="--sw:#3E4C72"><img src="assets/products/indigo.jpg" alt="" loading="lazy" /></span>Kurta Sets</a>
+        <a href="#shop/sarees"><span class="ph circle" style="--sw:#6B3F7A"><img src="assets/products/saree-purple.jpg" alt="" loading="lazy" /></span>Sarees</a>
+        <a href="#page/customization"><span class="circle circle-icon" aria-hidden="true">✂</span>Customize</a>
+        <a href="#shop/kids"><span class="ph circle" style="--sw:#E9C14A"><img src="assets/products/lehenga.jpg" alt="" loading="lazy" /></span>Kids</a>
+        <a href="#shop/kurtas"><span class="ph circle" style="--sw:#E58466"><img src="assets/products/coral.jpg" alt="" loading="lazy" /></span>Kurtas</a>
+        <a href="#shop/anarkalis"><span class="ph circle" style="--sw:#B0306A"><img src="assets/products/magenta.jpg" alt="" loading="lazy" /></span>Anarkalis</a>
+        <a href="#shop/new"><span class="ph circle" style="--sw:#F0B79A"><img src="assets/products/peach.jpg" alt="" loading="lazy" /></span>New in</a>
+      </nav>
+
+      <!-- Hero carousel -->
+      <section class="hero" aria-roledescription="carousel" aria-label="Featured">
+        <div class="hero-track" id="heroTrack">
+          <a class="hero-slide" href="#shop/offers" data-offer aria-label="Anniversary sale — shop now">
+            <span class="ph hero-ph" style="--sw:#4A1E24"><img src="assets/home/hero-anniversary.jpg" alt="Magenta anarkali, lime pin-tuck anarkali, blush silk set and sage silk set" /></span>
+            <span class="hero-copy">
+              <span class="hero-kicker">SAHASRAM</span>
+              <span class="hero-title">ANNIVERSARY SALE</span>
+              <span class="hero-line">BUY 1 <b>GET 20% OFF</b></span>
+              <span class="hero-line">BUY 2 <b>GET 1 FREE</b></span>
+              <span class="hero-date">TILL 31 OCTOBER</span>
+              <span class="hero-note">Kurta sets, anarkalis and kids’ festive wear</span>
+              <span class="hero-cta">SHOP HERE ›</span>
+            </span>
+          </a>
+          <a class="hero-slide" href="#shop/occasion/Festive" aria-label="The Diwali Edit — shop now">
+            <span class="ph hero-ph" style="--sw:#6E3A1E"><img src="assets/home/hero-diwali.jpg" alt="Yellow appliqué, orange palm-tree, mint and peach kurta sets" loading="lazy" /></span>
+            <span class="hero-copy">
+              <span class="hero-kicker">THE FESTIVE EDIT</span>
+              <span class="hero-title">THE DIWALI EDIT</span>
+              <span class="hero-note">Appliqué, mirror-work and embroidered kurta sets</span>
+              <span class="hero-cta">SHOP HERE ›</span>
+            </span>
+          </a>
+          <a class="hero-slide" href="#shop/sarees" aria-label="The Saree Edit — shop now">
+            <span class="ph hero-ph" style="--sw:#14100E"><img src="assets/home/hero-sarees.jpg" alt="Model in a purple checked silk saree with orange zari border" loading="lazy" /></span>
+            <span class="hero-copy">
+              <span class="hero-kicker">NEW AT SAHASRAM</span>
+              <span class="hero-title">THE SAREE EDIT</span>
+              <span class="hero-note">Zari-bordered silks and hand-tied bandhani</span>
+              <span class="hero-cta">SHOP SAREES ›</span>
+            </span>
+          </a>
+        </div>
+        <button class="hero-nav prev" data-action="hero-prev" aria-label="Previous slide">‹</button>
+        <button class="hero-nav next" data-action="hero-next" aria-label="Next slide">›</button>
+        <div class="hero-dots" id="heroDots" role="tablist" aria-label="Slides"></div>
+      </section>
+
+      <!-- Shop by style -->
+      <section class="block wide">
+        <h2 class="caps-title">SHOP BY STYLE</h2>
+        <p class="caps-sub">Find your silhouette, print or craft</p>
+        <div class="style-grid">
+          <a href="#shop/style/anarkali" class="tile"><span class="ph" style="--sw:#B0306A"><img src="assets/products/magenta.jpg" alt="" loading="lazy" /></span><b>ANARKALI SETS</b></a>
+          <a href="#shop/style/ajrakh" class="tile"><span class="ph" style="--sw:#3E4C72"><img src="assets/products/indigo.jpg" alt="" loading="lazy" /></span><b>BLOCK PRINT &amp; AJRAKH</b></a>
+          <a href="#shop/style/pin-tuck" class="tile"><span class="ph" style="--sw:#2C3A5C"><img src="assets/products/navy.jpg" alt="" loading="lazy" /></span><b>PIN-TUCK &amp; PLEATS</b></a>
+          <a href="#shop/style/kutch" class="tile"><span class="ph" style="--sw:#2A2624"><img src="assets/products/kutch.jpg" alt="" loading="lazy" /></span><b>MIRROR &amp; KUTCH WORK</b></a>
+          <a href="#shop/style/embroidered" class="tile"><span class="ph" style="--sw:#D48A97"><img src="assets/products/rose.jpg" alt="" loading="lazy" /></span><b>EMBROIDERED SETS</b></a>
+          <a href="#shop/style/silk" class="tile"><span class="ph" style="--sw:#E4B9B4"><img src="assets/products/blush.jpg" alt="" loading="lazy" /></span><b>SILK &amp; OCCASION</b></a>
+          <a href="#shop/style/kaftan" class="tile"><span class="ph" style="--sw:#9C9893"><img src="assets/products/kaftan.jpg" alt="" loading="lazy" /></span><b>KAFTANS &amp; DRESSES</b></a>
+          <a href="#shop/kids" class="tile"><span class="ph" style="--sw:#E9C14A"><img src="assets/products/lehenga.jpg" alt="" loading="lazy" /></span><b>KIDS’ ETHNIC SETS</b></a>
+        </div>
+      </section>
+
+      <!-- The Saree Edit -->
+      <section class="saree-edit" aria-label="The Saree Edit">
+        <div class="saree-grid wide-inner" id="sareeEdit">
+          <!-- filled by app.js: feature + copy + two cards -->
+        </div>
+      </section>
+
+      <!-- Shop by occasion -->
+      <section class="occasion">
+        <div class="wide-inner">
+          <h2 class="caps-title light">SHOP BY OCCASION</h2>
+          <div class="occasion-grid">
+            <a href="#shop/occasion/Everyday%20%26%20office"><span class="ph" style="--sw:#3E4C72"><img src="assets/home/occasion-everyday.jpg" alt="Indigo ajrakh set and black Kutch-embroidery set" loading="lazy" /></span><b>EVERYDAY &amp; OFFICE</b></a>
+            <a href="#shop/occasion/Festive"><span class="ph" style="--sw:#B0306A"><img src="assets/home/occasion-festive.jpg" alt="Magenta anarkali and yellow appliqué kurta set" loading="lazy" /></span><b>FESTIVE</b></a>
+            <a href="#shop/occasion/Wedding%20guest"><span class="ph" style="--sw:#A9B59A"><img src="assets/home/occasion-wedding.jpg" alt="Blush and sage silk kurta sets" loading="lazy" /></span><b>WEDDING GUEST</b></a>
+            <a href="#shop/occasion/Kids%E2%80%99%20celebrations"><span class="ph" style="--sw:#E9C14A"><img src="assets/home/occasion-kids.jpg" alt="Kids lehenga-choli and Nehru jacket" loading="lazy" /></span><b>KIDS’ CELEBRATIONS</b></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- New arrivals -->
+      <section class="block wrap">
+        <div class="head"><div><h2 class="sec">New Arrivals</h2><p class="sub">Fresh from our latest buying trip</p></div><a href="#shop/new" class="more">View all</a></div>
+        <div class="rail rail-6" id="newArrivals"></div>
+      </section>
+
+      <!-- In our window -->
+      <section class="window-band">
+        <div class="wrap">
+          <div class="head"><div><h2 class="sec">In Our Window This Week</h2><p class="sub">The pieces on display at the studio — shop them before they’re gone</p></div><a href="#shop/window" class="more">See all</a></div>
+          <div class="grid grid-4" id="windowItems"></div>
+        </div>
+      </section>
+
+      <!-- Bestsellers banner -->
+      <section class="block wide">
+        <h2 class="caps-title">SAHASRAM BESTSELLERS</h2>
+        <a href="#shop/occasion/Festive" class="banner">
+          <span class="ph banner-ph" style="--sw:#6E3A1E"><img src="assets/home/hero-diwali.jpg" alt="Yellow appliqué, orange palm-tree, mint and peach kurta sets" loading="lazy" /></span>
+          <span class="banner-copy"><b>THE DIWALI EDIT</b><i>Appliqué, mirror-work and embroidered kurta sets</i><span>SHOP HERE ›</span></span>
+        </a>
+      </section>
+
+      <section class="wrap block-tight">
+        <div class="head"><h2 class="sec sec-sm">Most loved this season</h2>
+          <div class="chips" id="lovedChips" role="tablist" aria-label="Filter most loved">
+            <button class="chip on" data-loved="all">All</button><button class="chip" data-loved="Kurta Sets">Kurta Sets</button><button class="chip" data-loved="Kurtas">Kurtas</button><button class="chip" data-loved="Kids">Kids</button>
+          </div>
+        </div>
+        <div class="grid grid-4" id="mostLoved"></div>
+      </section>
+
+      <!-- Offer strip -->
+      <section class="offer-strip" data-offer>
+        <div class="wrap offer-strip-inner">
+          <div><h2 class="h">Anniversary Offers</h2><p><b>Buy 1, get 20% off</b> · <b>Buy 2, get 1 free</b> · applied automatically in your bag · till 31 October · free shipping above ₹2,999</p></div>
+          <a href="#shop/offers" class="btn">Shop offers</a>
+        </div>
+      </section>
+
+      <!-- Handpicked -->
+      <section class="block wrap">
+        <div class="head"><div><h2 class="sec">Handpicked by Sharanya</h2><p class="sub">The founder’s favourites from the current collection</p></div><a href="#shop/handpicked" class="more">View all</a></div>
+        <div class="grid grid-4" id="handpicked"></div>
+      </section>
+
+      <!-- Price & size -->
+      <section class="block wrap price-size">
+        <div>
+          <h2 class="h h-30">Shop by Price</h2>
+          <div class="price-grid">
+            <a href="#shop/price/0-999" class="btn btn-tall">Under ₹999</a>
+            <a href="#shop/price/1000-2500" class="btn btn-tall">₹1,000 – ₹2,500</a>
+            <a href="#shop/price/2500-5000" class="btn btn-tall">₹2,500 – ₹5,000</a>
+            <a href="#shop/price/5000-999999" class="btn btn-tall">₹5,000 &amp; above</a>
+          </div>
+        </div>
+        <div>
+          <h2 class="h h-30">Shop by Size</h2>
+          <div class="chips wrap-chips">
+            <a class="chip" href="#shop/size/S%20%2F%2036">S/36</a><a class="chip" href="#shop/size/M%20%2F%2038">M/38</a><a class="chip" href="#shop/size/L%20%2F%2040">L/40</a><a class="chip" href="#shop/size/XL%20%2F%2042">XL/42</a><a class="chip" href="#shop/size/XXL%20%2F%2044">XXL/44</a><a class="chip" href="#shop/size/Free%20size">Free size</a><a class="chip" href="#shop/kids">Kids 0–8Y+</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Video call -->
+      <section class="block wrap">
+        <div class="call-card">
+          <span class="ph call-ph" style="--sw:#B0306A"><img src="assets/products/magenta.jpg" alt="Magenta anarkali with vine and bird embroidery" loading="lazy" /></span>
+          <div class="call-copy">
+            <h2 class="h">Shop on Video Call</h2>
+            <p>Pick up to ten pieces and choose a time. Sharanya will show you each one on WhatsApp video — the colour in daylight, the embroidery up close, the way the dupatta falls.</p>
+            <div><button class="btn btn-gold" data-action="book-call">Book a video call</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Story -->
+      <section class="block wrap story">
+        <div class="story-photos">
+          <span class="ph" style="--sw:#2A2624"><img src="assets/products/kutch.jpg" alt="Black kurta set with Kutch embroidery" loading="lazy" /></span>
+          <span class="ph offset" style="--sw:#E9C14A"><img src="assets/products/lehenga.jpg" alt="Kids yellow floral lehenga-choli" loading="lazy" /></span>
+        </div>
+        <div class="story-copy" id="about">
+          <h2 class="sec">Our Story</h2>
+          <p class="h story-lede">A Hyderabad clothing studio, chosen piece by piece.</p>
+          <p>Sahasram opened its doors in Hyderabad in October 2025. Every kurta, set and kids’ outfit is picked by hand — for the print, the fall of the fabric and how it will feel to wear through a long, warm day. Most pieces come in a single size and colour, so what you take home is truly yours.</p>
+          <div class="story-facts">
+            <span><b>One of a kind</b>most pieces, one size, one colour</span>
+            <span><b>See before you buy</b>at the studio or on video</span>
+            <span><b>One year old</b>thank you, Hyderabad</span>
+          </div>
+          <a href="#page/about-us" class="more">Read our story</a>
+        </div>
+      </section>
+
+      <!-- Reviews + Instagram -->
+      <section class="block wrap two-cards">
+        <div class="panel">
+          <h2 class="h h-30">Customer Reviews</h2>
+          <div class="stars" role="img" aria-label="Google reviews">★★★★★ <span>Reviews from Google</span></div>
+          <p class="h quote">“The studio feels personal — Sharanya helped me pick a set that fit perfectly, and showed me three more on video before I decided.”</p>
+          <span class="muted small">— Sample review · live Google reviews will appear here</span>
+          <a href="https://search.google.com/local/writereview?placeid=ChIJwQL-i3OTyzsR6krZOV-Bpg0" target="_blank" rel="noopener" class="more">Write a review</a>
+        </div>
+        <div class="panel">
+          <h2 class="h h-30">Follow @thesahasramway</h2>
+          <div class="insta">
+            <span class="ph" style="--sw:#F0B79A"><img src="assets/products/peach.jpg" alt="Instagram post: peach crinkle kurta set" loading="lazy" /></span>
+            <span class="ph" style="--sw:#9CC3E0"><img src="assets/products/skyblue.jpg" alt="Instagram post: sky-blue anarkali" loading="lazy" /></span>
+            <span class="ph" style="--sw:#EDE8DF"><img src="assets/products/nehru.jpg" alt="Instagram post: kids quilted Nehru jacket" loading="lazy" /></span>
+            <span class="ph" style="--sw:#E2873A"><img src="assets/products/orange.jpg" alt="Instagram post: orange palm-tree embroidery set" loading="lazy" /></span>
+          </div>
+          <a href="https://www.instagram.com/thesahasramway/" target="_blank" rel="noopener" class="more">Follow on Instagram</a>
+        </div>
+      </section>
+
+      <!-- Where to find us -->
+      <section class="find-us" id="studio">
+        <div class="wrap find-inner">
+          <svg class="studio-drawing" viewBox="0 0 520 440" role="img" aria-label="Line drawing of the Sahasram studio front with mannequins in the window">
+            <g fill="none" stroke="#4A1E24" stroke-width="2">
+              <rect x="30" y="40" width="460" height="380"/><rect x="20" y="28" width="480" height="16"/>
+              <rect x="44" y="60" width="30" height="340"/><rect x="446" y="60" width="30" height="340"/>
+              <rect x="90" y="64" width="340" height="56" fill="#4A1E24"/><rect x="90" y="136" width="340" height="270"/>
+              <line x1="90" y1="160" x2="430" y2="160"/>
+              <path d="M150 230 a14 14 0 1 1 0.1 0 M150 244 l-26 40 l12 0 l-10 110 M150 244 l26 40 l-12 0 l10 110 M136 284 l28 0"/>
+              <path d="M260 222 a14 14 0 1 1 0.1 0 M260 236 l-30 46 l14 0 l-14 112 M260 236 l30 46 l-14 0 l14 112 M244 282 l32 0"/>
+              <path d="M370 230 a14 14 0 1 1 0.1 0 M370 244 l-24 42 l10 0 l-8 108 M370 244 l24 42 l-10 0 l8 108"/>
+              <line x1="110" y1="180" x2="200" y2="180"/><line x1="320" y1="180" x2="410" y2="180"/>
+              <path d="M118 180 v24 M128 180 v28 M138 180 v22 M330 180 v26 M340 180 v20 M350 180 v28 M400 180 v24"/>
+              <path d="M470 420 c-6 -40 10 -70 -6 -100 M470 420 c6 -30 20 -50 10 -80 M470 420 c-14 -20 -24 -40 -20 -64"/>
+            </g>
+            <text x="260" y="101" text-anchor="middle" fill="#FFFDF9" style="font:600 28px 'Cormorant Garamond',serif;letter-spacing:8px">SAHASRAM</text>
+          </svg>
+          <div class="find-copy">
+            <h2 class="h find-title">WHERE TO FIND US</h2>
+            <span class="find-rule" aria-hidden="true"></span>
+            <span class="label">HYDERABAD · THE STUDIO</span>
+            <p class="find-addr">1st Floor, Krishna Teja Classic, Plot 1247, Road No. 45, KPHB Colony, Hyderabad 500085<br />Opposite Prajay Megapolis</p>
+            <p class="find-hours">Open all days, 11 AM – 10 PM · 73372 21100 (call / WhatsApp)</p>
+            <div class="btn-row">
+              <a href="https://www.google.com/maps/search/?api=1&amp;query=Sahasram+Clothing+Studio&amp;query_place_id=ChIJwQL-i3OTyzsR6krZOV-Bpg0" target="_blank" rel="noopener" class="btn pri">Get directions</a>
+              <a href="https://wa.me/917337221100?text=Hi%20Sahasram%2C%20I%27d%20love%20to%20visit%20the%20studio." target="_blank" rel="noopener" class="btn btn-green">WhatsApp us</a>
+            </div>
+            <div class="studio-photos">
+              <span class="ph" style="--sw:#B9A892"><img src="assets/home/studio-front.jpg" alt="Studio front" loading="lazy" /><i>Studio front</i></span>
+              <span class="ph" style="--sw:#A8957D"><img src="assets/home/studio-inside.jpg" alt="Inside the studio" loading="lazy" /><i>Inside the studio</i></span>
+              <span class="ph" style="--sw:#C2B29C"><img src="assets/home/studio-racks.jpg" alt="Trial room and racks" loading="lazy" /><i>Trial room &amp; racks</i></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exhibitions (hidden when none are listed) -->
+      <section class="block wrap" id="exhibitions" hidden>
+        <div class="head"><div><h2 class="sec">Catch Us at an Exhibition</h2><p class="sub">Sahasram travels with a curated rail of pieces. Meet Sharanya, try everything on, and take home the festive edit.</p></div></div>
+        <div class="event-row" id="exhibitionCards"></div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="block wrap faq">
+        <div><h2 class="sec">Frequently Asked Questions</h2><p class="sub">Still unsure? We’re one WhatsApp message away.</p></div>
+        <div class="faq-list">
+          <details open><summary>Where is Sahasram boutique in Hyderabad?</summary><p>On the 1st floor of Krishna Teja Classic, Plot 1247, Road No. 45, KPHB Colony, Hyderabad 500085 — opposite Prajay Megapolis. Call or WhatsApp 73372 21100.</p></details>
+          <details><summary>Can I see a kurta set on a video call before buying?</summary><p>Yes. Choose up to ten pieces on the website, pick a time, and Sharanya will show them to you on a WhatsApp video call before you decide.</p></details>
+          <details><summary>How much do kurta sets cost at Sahasram?</summary><p>Kurtas start under ₹1,000. Kurta sets range from about ₹1,600 for everyday cotton to ₹10,700 for silk occasion sets.</p></details>
+          <details><summary>Do you ship outside Hyderabad?</summary><p>Shipping across India is being set up for launch. Message us on WhatsApp and we’ll help with your order in the meantime.</p></details>
+          <details><summary>Do you have kids’ ethnic wear?</summary><p>Yes — lehenga-cholis, Nehru jackets, dresses and festive sets for ages 0–8 and up.</p></details>
+        </div>
+      </section>
+
+      <!-- Newsletter -->
+      <section class="newsletter">
+        <div class="wrap newsletter-inner">
+          <h2 class="sec">Stay in Touch</h2>
+          <p class="sub">New arrivals and exhibition dates, sent to your WhatsApp or inbox first.</p>
+          <form id="newsletterForm" class="newsletter-form"><label class="sr" for="nl">WhatsApp number or email</label><input id="nl" required placeholder="WhatsApp number or email" /><button class="btn pri">Subscribe</button></form>
+        </div>
+      </section>
+    </div>
+    <div id="pageView" hidden></div>
   </main>
-  <footer class="site-footer"><div class="footer-top"><a class="brand brand-footer" href="#home"><span class="brand-mark">S</span><span>SAHASRAM<small>THE SAHASRAM WAY</small></span></a><p>Thoughtfully chosen Indian wear<br/>from our Hyderabad studio.</p><a class="footer-whatsapp" href="https://wa.me/917337221100" target="_blank" rel="noreferrer">WhatsApp us <span>↗</span></a></div><div class="footer-links"><div><b>SHOP</b><a href="#category/Kurta%20Sets">Kurta Sets</a><a href="#category/Sarees">Sarees</a><a href="#category/Kids">Kids</a><a href="#customization">Customization</a><a href="#exhibitions">Upcoming exhibitions</a></div><div><b>CUSTOMER CARE</b><a href="#track-order">Track your order</a><a href="#book-appointment">Book an appointment</a><a href="#measure">How to measure</a><a href="#shipping">Shipping</a><a href="#returns">Returns & exchanges</a></div><div><b>THE STUDIO</b><a href="#about-us">About us</a><a href="#store-policies">Store policies</a><a href="#terms">Terms & conditions</a><a href="#privacy">Privacy policy</a><a href="#contact">Contact us</a></div><div class="footer-contact"><b>COME SAY HELLO</b><span>+91 73372 21100</span><span>All days · 11 AM–10 PM</span><a href="https://maps.google.com/?q=Sahasram+KPHB+Colony+Hyderabad" target="_blank" rel="noreferrer">KPHB Colony, Hyderabad ↗</a></div></div><div class="footer-bottom"><span>© Sahasram 2026 · The Sahasram Way</span><span>Made with care in Hyderabad</span><a href="/admin.html">Owner console · demo</a></div></footer>
-  <nav class="mobile-bottom-nav" aria-label="Quick links"><a href="#home"><span>⌂</span>Home</a><button data-action="search"><span>⌕</span>Search</button><a href="#category/All%20pieces"><span>◌</span>Shop</a><button data-action="wishlist"><span>♡</span>Saved</button><button data-action="bag"><span>▱</span>Bag <i id="mobileBagCount">0</i></button></nav>
-  <div class="overlay" id="overlay" aria-hidden="true"><div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Sahasram panel"><button class="drawer-close" data-action="close" aria-label="Close">×</button><div id="drawerContent"></div></div></div>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div><b>SHOP</b><a href="#shop/kurta-sets">Kurta Sets</a><a href="#shop/sarees">Sarees</a><a href="#shop/kurtas">Kurtas</a><a href="#shop/kids">Kids</a><a href="#page/customization">Customization</a><a href="#shop/new">New Arrivals</a></div>
+      <div><b>CUSTOMER CARE</b><a href="#page/track-order">Track Your Order</a><a href="#page/book-appointment">Book an Appointment</a><a href="#page/measure">How to Measure</a><a href="#page/shipping">Shipping</a><a href="#page/returns">Returns &amp; Exchanges</a><a href="#page/faqs">FAQs</a></div>
+      <div><b>COMPANY</b><a href="#page/about-us">About Us</a><a href="#page/exhibitions">Upcoming Exhibitions</a><a href="#page/store-policies">Store Policies</a><a href="#page/terms">Terms &amp; Conditions</a><a href="#page/privacy">Privacy Policy</a></div>
+      <div><b>CONTACT US</b><span>Call <a href="tel:+917337221100">+91 73372 21100</a></span><span>WhatsApp <a href="https://wa.me/917337221100" target="_blank" rel="noopener">+91 73372 21100</a></span><span>Open all days</span><span>11 AM – 10 PM</span><a href="#page/contact" class="strong">Contact Us</a></div>
+    </div>
+    <div class="wrap footer-bottom">
+      <span>© 2026 Sahasram · GSTIN 36AVNPN4190L1ZX · KPHB Colony, Hyderabad</span>
+      <span><a href="https://www.instagram.com/thesahasramway/" target="_blank" rel="noopener">Instagram</a> · <a href="https://wa.me/917337221100" target="_blank" rel="noopener">WhatsApp</a></span>
+    </div>
+    <p class="wrap preview-note">Preview store — catalogue sizes and some prices are illustrative; checkout does not take payment.</p>
+  </footer>
+
+  <a class="wa-fab" href="https://wa.me/917337221100?text=Hi%20Sahasram!" target="_blank" rel="noopener" aria-label="Chat with Sahasram on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c.5 2 2 3.5 4 4l1-1 2 1v1.5c-3.5.5-7.5-3.5-7-7H10l1 2z"/></svg><span>Chat with us</span>
+  </a>
+
+  <nav class="tabbar" aria-label="Quick links">
+    <a href="#home" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9H4z"/></svg>Home</a>
+    <a href="#shop/all" data-tab="shop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Shop</a>
+    <button data-action="book-call"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg>Video call</button>
+    <button data-action="wishlist" data-tab="wish"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9-9a4.6 4.6 0 0 1 9-2 4.6 4.6 0 0 1 9 2c-2 4.6-9 9-9 9z"/></svg>Wishlist</button>
+    <button data-action="bag" data-tab="bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.5 12h-11z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>Bag<i data-bag-count>0</i></button>
+  </nav>
+
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <button class="drawer-close" data-action="close" aria-label="Close">✕</button>
+      <div id="drawerContent"></div>
+    </div>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <script>window.SAHASRAM_CONFIG = { API_BASE_URL: "" };</script>
-  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="src/app.js"></script>
 </body>
 </html>
