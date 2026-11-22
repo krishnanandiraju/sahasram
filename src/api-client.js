@@ -62,7 +62,9 @@ export const api = {
     try {
       for (let i = 0; i < unique.length; i += 20) {
         const url = `${config.apiBaseUrl.replace(/\/$/, "")}/storefront/v1/availability?ids=${unique.slice(i, i + 20).map(encodeURIComponent).join(",")}`;
-        const response = await fetch(url, {headers: {"X-Storefront-Key": config.publishableKey}, cache: "no-store"});
+        // 6 s cap: on the Free plan the API can take much longer to wake; checkout then
+        // proceeds on the catalogue's stock instead of keeping the shopper waiting.
+        const response = await fetch(url, {headers: {"X-Storefront-Key": config.publishableKey}, cache: "no-store", signal: AbortSignal.timeout(6000)});
         if (!response.ok) throw new Error(`availability ${response.status}`);
         for (const entry of (await response.json()).products || []) result[entry.id] = entry;
       }
