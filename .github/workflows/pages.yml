@@ -1,37 +1,88 @@
-# Builds the public storefront (no owner console) and publishes it to GitHub Pages
-# on every push to main. Run it by hand from the Actions tab with "Run workflow".
+# Builds the public storefront (no owner console), pulls the BoutiqueOS catalogue,
+# and publishes to GitHub Pages.
+#
+# Runs on every push to main, by hand, when BoutiqueOS sends the
+# "boutiqueos-catalog-changed" event, and every 10 minutes. The 10-minute run
+# deploys only when the catalogue version changed.
+#
+# Settings (repo Settings → Secrets and variables → Actions):
+#   secret    BOUTIQUEOS_CLIENT_SECRET
+#   variables BOUTIQUEOS_BASE_URL, BOUTIQUEOS_CLIENT_ID, BOUTIQUEOS_PUBLISHABLE_KEY
+# Until BOUTIQUEOS_BASE_URL is set, the site is built with its demo catalogue.
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [boutiqueos-catalog-changed]
+  schedule:
+    - cron: "*/10 * * * *"
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  issues: write
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
+    # Scheduled runs only make sense once the feed is configured.
+    if: github.event_name != 'schedule' || vars.BOUTIQUEOS_BASE_URL != ''
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.sync.outputs.changed }}
+    env:
+      HAS_FEED: ${{ vars.BOUTIQUEOS_BASE_URL != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm run build:public
+
+      - name: Sync catalogue from BoutiqueOS
+        id: sync
+        if: env.HAS_FEED == 'true'
+        env:
+          BOUTIQUEOS_BASE_URL: ${{ vars.BOUTIQUEOS_BASE_URL }}
+          BOUTIQUEOS_CLIENT_ID: ${{ vars.BOUTIQUEOS_CLIENT_ID }}
+          BOUTIQUEOS_CLIENT_SECRET: ${{ secrets.BOUTIQUEOS_CLIENT_SECRET }}
+          BOUTIQUEOS_PUBLISHABLE_KEY: ${{ vars.BOUTIQUEOS_PUBLISHABLE_KEY }}
+          DEPLOYED_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: node tools/sync-catalog.mjs --out dist ${{ github.event_name == 'schedule' && '--skip-if-unchanged' || '' }}
+
       - uses: actions/configure-pages@v5
+        if: steps.sync.outputs.changed != 'false'
       - uses: actions/upload-pages-artifact@v3
+        if: steps.sync.outputs.changed != 'false'
         with:
           path: dist
 
+      - name: Report a failed catalogue sync
+        if: failure() && steps.sync.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          OPEN=$(gh issue list -R "${{ github.repository }}" --label catalog-sync --state open --json number --jq '.[0].number')
+          if [ -n "$OPEN" ]; then
+            gh issue comment "$OPEN" -R "${{ github.repository }}" --body "Failed again: $RUN"
+          else
+            gh label create catalog-sync -R "${{ github.repository }}" --color B60205 --force >/dev/null
+            gh issue create -R "${{ github.repository }}" --label catalog-sync \
+              --title "BoutiqueOS catalogue sync failed" \
+              --body "The site was not redeployed; the last good version stays live. Details: $RUN"
+          fi
+
   deploy:
     needs: build
+    if: needs.build.result == 'success' && needs.build.outputs.changed != 'false'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

@@ -64,7 +64,7 @@
         <button aria-haspopup="true" data-action="more">MORE <span aria-hidden="true">▾</span></button>
         <div class="mega" id="mega">
           <div><b>SHOP</b><a href="#shop/kurtas">Kurtas</a><a href="#shop/anarkalis">Anarkalis</a><a href="#shop/style/kaftan">Kaftans &amp; dresses</a><a href="#shop/all">All pieces</a></div>
-          <div><b>BY OCCASION</b><a href="#shop/occasion/Everyday%20%26%20office">Everyday &amp; office</a><a href="#shop/occasion/Festive">Festive</a><a href="#shop/occasion/Wedding%20guest">Wedding guest</a><a href="#shop/occasion/Kids%E2%80%99%20celebrations">Kids’ celebrations</a></div>
+          <div id="megaOccasions"><b>BY OCCASION</b><a href="#shop/occasion/Everyday%20%26%20office">Everyday &amp; office</a><a href="#shop/occasion/Festive">Festive</a><a href="#shop/occasion/Wedding%20guest">Wedding guest</a><a href="#shop/occasion/Kids%E2%80%99%20celebrations">Kids’ celebrations</a></div>
           <div><b>THE STUDIO</b><a href="#page/about-us">Our story</a><a href="#page/exhibitions">Exhibitions</a><a href="#page/measure">How to measure</a><a href="#page/book-appointment">Book an appointment</a></div>
         </div>
       </div>
@@ -137,7 +137,7 @@
       <section class="block wide">
         <h2 class="caps-title">SHOP BY STYLE</h2>
         <p class="caps-sub">Find your silhouette, print or craft</p>
-        <div class="style-grid">
+        <div class="style-grid" id="styleTiles">
           <a href="#shop/style/anarkali" class="tile"><span class="ph" style="--sw:#B0306A"><img src="assets/products/magenta.jpg" alt="" loading="lazy" /></span><b>ANARKALI SETS</b></a>
           <a href="#shop/style/ajrakh" class="tile"><span class="ph" style="--sw:#3E4C72"><img src="assets/products/indigo.jpg" alt="" loading="lazy" /></span><b>BLOCK PRINT &amp; AJRAKH</b></a>
           <a href="#shop/style/pin-tuck" class="tile"><span class="ph" style="--sw:#2C3A5C"><img src="assets/products/navy.jpg" alt="" loading="lazy" /></span><b>PIN-TUCK &amp; PLEATS</b></a>
@@ -160,7 +160,7 @@
       <section class="occasion">
         <div class="wide-inner">
           <h2 class="caps-title light">SHOP BY OCCASION</h2>
-          <div class="occasion-grid">
+          <div class="occasion-grid" id="occasionTiles">
             <a href="#shop/occasion/Everyday%20%26%20office"><span class="ph" style="--sw:#3E4C72"><img src="assets/home/occasion-everyday.jpg" alt="Indigo ajrakh set and black Kutch-embroidery set" loading="lazy" /></span><b>EVERYDAY &amp; OFFICE</b></a>
             <a href="#shop/occasion/Festive"><span class="ph" style="--sw:#B0306A"><img src="assets/home/occasion-festive.jpg" alt="Magenta anarkali and yellow appliqué kurta set" loading="lazy" /></span><b>FESTIVE</b></a>
             <a href="#shop/occasion/Wedding%20guest"><span class="ph" style="--sw:#A9B59A"><img src="assets/home/occasion-wedding.jpg" alt="Blush and sage silk kurta sets" loading="lazy" /></span><b>WEDDING GUEST</b></a>
@@ -387,7 +387,6 @@
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script>window.SAHASRAM_CONFIG = { API_BASE_URL: "" };</script>
   <script type="module" src="src/app.js"></script>
 </body>
 </html>

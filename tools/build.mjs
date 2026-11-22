@@ -8,7 +8,7 @@ const ownerOnly = new Set(["admin.html", "styles.css", "src/admin.js"]);
 const dist = new URL("../dist/", import.meta.url);
 await rm(dist, {recursive:true, force:true});
 await mkdir(dist, {recursive:true});
-for (const entry of ["index.html", "admin.html", "styles.css", "store.css", "favicon.svg", "src", "assets"]) {
+for (const entry of ["index.html", "admin.html", "styles.css", "store.css", "favicon.svg", "src", "assets", "data"]) {
   if (publicOnly && ownerOnly.has(entry)) continue;
   const from = new URL(`../${entry}`, import.meta.url);
   try { await access(from); } catch { console.warn(`skipped missing ${entry}`); continue; }

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node tools/build.mjs",
-    "build:public": "node tools/build.mjs --public"
+    "build:public": "node tools/build.mjs --public",
+    "sync:sample": "node tools/sync-catalog.mjs --out . --from-file ../../boutiqueERP-storefront/docs/storefront/samples",
+    "sync": "node tools/sync-catalog.mjs --out dist"
   }
 }

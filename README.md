@@ -22,13 +22,19 @@ The anniversary offer (bar, hero slide, offer prices, bag discount) appears only
 
 Routes: `#shop/<kurta-sets|sarees|kurtas|kids|anarkalis|new|window|handpicked|offers|all>`, `#shop/style/<anarkali|ajrakh|pin-tuck|kutch|embroidered|silk|kaftan>`, `#shop/occasion/<name>`, `#shop/price/<min>-<max>`, `#shop/size/<label>`, `#product/<id>`, `#search/<query>`, `#page/<key>`.
 
-## Demo data and backend connection
+## Catalogue from BoutiqueOS
 
-The storefront ships with a 61-piece synthetic preview catalogue across kurta sets, kurtas, sarees, and kidswear, plus sample appointment and report data from `src/demo-data.js`. The added assortment is for browsing and search demonstrations; it is not a stock-sheet import and does not represent confirmed Sahasram inventory. Nothing here charges a payment method, sends a WhatsApp message, or creates an actual order.
+Products, prices, sizes, stock and photos come from the BoutiqueOS Storefront Feed (see the PRD "BoutiqueOS Storefront Feed for the Sahasram Website"). Nothing in this repo needs editing when stock changes.
 
-Set `window.SAHASRAM_CONFIG = { API_BASE_URL: "https://your-api.example.com" }` before `src/api-client.js` loads to use the backend adapter. When an API base URL is present, read operations call the documented endpoints in `src/api-client.js`; requests include JSON and same-origin credentials. Write operations remain in demo mode until a backend endpoint is explicitly wired in the adapter.
+- `tools/sync-catalog.mjs` fetches `/storefront/v1/manifest` and `/catalog` with the client ID and secret, validates them, and writes `data/catalog.json`, `data/manifest.json` and `data/site-config.json` into the build. It refuses to deploy when the feed fails validation, cannot be reached after three tries, or the product count falls by more than half.
+- `.github/workflows/pages.yml` runs the sync on every push, by hand, on the BoutiqueOS `boutiqueos-catalog-changed` event, and every 10 minutes (deploying only when the catalogue version changed). A failed sync opens a `catalog-sync` issue and leaves the last good site live.
+- `src/feed.js` maps feed products to the page code. Style and occasion menus are built from the feed's own values.
+- Photos use the feed's renditions (`srcset`), focal point (crop), dominant colour and blurred placeholder.
+- The bag and checkout check live stock with `/storefront/v1/availability` using the publishable key.
 
-`src/contracts.ts` defines the initial API shapes for products, stock, offers, appointments, orders, and report summaries. The contract is intentionally provider-neutral so payment, shipping, WhatsApp Business, and GST invoice vendors can be chosen later.
+Settings (GitHub → Settings → Secrets and variables → Actions): secret `BOUTIQUEOS_CLIENT_SECRET`; variables `BOUTIQUEOS_BASE_URL`, `BOUTIQUEOS_CLIENT_ID`, `BOUTIQUEOS_PUBLISHABLE_KEY`. Until `BOUTIQUEOS_BASE_URL` is set, the site uses the demo catalogue in `src/demo-data.js`.
+
+Local development: `npm run sync:sample` loads the BoutiqueOS sample responses (from `../../boutiqueERP-storefront/docs/storefront/samples`) into `data/`, then `npm run build`. Delete `data/` to go back to the demo catalogue. Checkout is still a preview: no payment is taken and no order is created.
 
 ## MVP implementation boundaries
 

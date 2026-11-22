@@ -1,4 +1,5 @@
 import {api} from "./api-client.js";
+import {styleLabel, bestUrl as feedBestUrl} from "./feed.js";
 
 /* ---------- helpers ---------- */
 const $ = (s, el = document) => el.querySelector(s);
@@ -17,19 +18,35 @@ const SVG_HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-
 const byId = (id) => state.products.find(p => p.id === id);
 const has = (p, kind) => (p.labels || []).some(l => l.kind === kind);
 const available = (p) => p.sizes.filter(s => s.available > 0);
+const isOut = (p) => !available(p).length;
+const outLabel = (p) => p.stockStatus === "unavailable" ? "On hold" : "Sold out";
+// Sold-out and held pieces stay listed (the feed keeps them 14 days) but sort last.
+const inStockFirst = (list) => [...list].sort((a, b) => Number(isOut(a)) - Number(isOut(b)));
 
 /* ---------- product presentation ---------- */
-const photo = (p, i = 0, alt = p.name, eager = false) =>
-  `<span class="ph" style="--sw:${esc(p.swatch || "#CDB79A")}">${p.imageUrls?.[i] ? `<img src="${esc(p.imageUrls[i])}" alt="${esc(alt)}" ${eager ? "" : `loading="lazy"`} />` : ""}</span>`;
+const CARD_SIZES = "(min-width: 1200px) 300px, (min-width: 960px) 25vw, 50vw";
+function photo(p, i = 0, alt = p.name, eager = false, sizes = CARD_SIZES) {
+  const img = p.images?.[i];
+  if (!img) return `<span class="ph" style="--sw:${esc(p.swatch || "#CDB79A")}">${p.imageUrls?.[i] ? `<img src="${esc(p.imageUrls[i])}" alt="${esc(alt)}" ${eager ? "" : `loading="lazy"`} />` : ""}</span>`;
+  // Feed photo: srcset from renditions, focal point for the crop, colour and blur while loading.
+  const webp = (img.renditions || []).filter(r => r.format === "webp").sort((a, b) => a.width - b.width);
+  const fallback = feedBestUrl(img);
+  const pct = (v, d) => `${Math.round((v ?? d) * 100)}%`;
+  const style = `--sw:${img.dominant_color || p.swatch || "#CDB79A"};--pos:${pct(img.focal_point?.x, .5)} ${pct(img.focal_point?.y, .4)}${img.placeholder ? `;--lqip:url('${img.placeholder}')` : ""}`;
+  const text = alt === p.name && img.alt ? img.alt : alt;
+  return `<span class="ph ph-feed${img.orientation === "landscape" ? " ph-contain" : ""}" style="${esc(style)}"><picture>${webp.length ? `<source type="image/webp" srcset="${webp.map(r => `${esc(r.url)} ${r.width}w`).join(", ")}" sizes="${sizes}" />` : ""}<img src="${esc(fallback)}" alt="${esc(text)}" width="${img.width || ""}" height="${img.height || ""}" ${eager ? `fetchpriority="high"` : `loading="lazy"`} decoding="async" /></picture></span>`;
+}
 function badge(p) {
-  const l = (p.labels || []).find(x => ["handpicked", "bestseller", "new", "last_piece"].includes(x.kind));
+  if (isOut(p)) return `<span class="badge">${esc(outLabel(p))}</span>`;
+  const labels = p.labels || [];
+  const l = labels.find(x => x.kind === "last_piece") || labels.find(x => ["handpicked", "bestseller", "new"].includes(x.kind));
   if (!l) return "";
   const text = l.kind === "new" ? "New" : l.kind === "last_piece" ? "Last piece" : l.text;
   return `<span class="badge">${esc(text)}</span>`;
 }
 function stockNote(p) {
   const open = available(p);
-  if (!open.length) return "Sold out";
+  if (!open.length) return outLabel(p);
   if (has(p, "last_piece")) return open.length === 1 && p.sizes.length > 1 ? `Last piece · ${open[0].label.replace(" / ", "/")}` : "Last piece";
   if (p.sizes.length > 1 && open.length === 1) return `Only ${open[0].label.replace(" / ", "/")} left`;
   return "";
@@ -43,7 +60,7 @@ function priceHTML(p) {
 function card(p, {sub = true, offer = true} = {}) {
   const saved = state.wishes.includes(p.id);
   const stock = stockNote(p), on = offer ? offerNote(p) : "";
-  return `<article class="card">
+  return `<article class="card${isOut(p) ? " is-out" : ""}">
     <div class="card-media"><a href="#product/${esc(p.id)}" aria-label="${esc(p.name)}">${photo(p)}</a>${badge(p)}
       <button class="heart ${saved ? "saved" : ""}" data-action="wish" data-id="${esc(p.id)}" aria-pressed="${saved}" aria-label="${saved ? "Remove from" : "Save to"} wishlist: ${esc(p.name)}">${SVG_HEART}</button></div>
     ${sub ? `<span class="card-sub">${esc(subLine(p))}</span>` : ""}
@@ -56,7 +73,7 @@ function card(p, {sub = true, offer = true} = {}) {
 
 /* ---------- collections ---------- */
 const CATS = {"kurta-sets": "Kurta Sets", "kurtas": "Kurtas", "sarees": "Sarees", "kids": "Kids"};
-const STYLE_NAMES = {anarkali: "Anarkali sets", ajrakh: "Block print & ajrakh", "pin-tuck": "Pin-tuck & pleats", kutch: "Mirror & Kutch work", embroidered: "Embroidered sets", silk: "Silk & occasion", kaftan: "Kaftans & dresses", kids: "Kids’ ethnic sets"};
+const STYLE_NAME = (s) => s === "kids" ? "Kids’ ethnic sets" : styleLabel(s);
 function collection(path) {
   const [kind, ...rest] = path.split("/");
   const arg = rest.join("/");
@@ -68,7 +85,7 @@ function collection(path) {
     case "window": return {title: "In Our Window", crumb: "In our window", intro: "On display at the studio this week.", items: all.filter(p => has(p, "window"))};
     case "handpicked": return {title: "Handpicked by Sharanya", crumb: "Handpicked", intro: "The founder’s favourites from the current collection.", items: all.filter(p => has(p, "handpicked"))};
     case "offers": return {title: "Anniversary Offers", crumb: "Offers", intro: state.offerActive ? "Buy 1, get 20% off · Buy 2, get 1 free — applied automatically in your bag." : "The anniversary offer has ended. Here’s everything in the studio.", items: all};
-    case "style": return {title: STYLE_NAMES[arg] || arg, crumb: STYLE_NAMES[arg] || arg, items: all.filter(p => (p.styles || []).includes(arg) || (arg === "kids" && p.category === "Kids"))};
+    case "style": return {title: STYLE_NAME(arg), crumb: STYLE_NAME(arg), items: all.filter(p => (p.styles || []).includes(arg) || (arg === "kids" && p.category === "Kids"))};
     case "occasion": return {title: arg, crumb: arg, intro: `Pieces for ${arg.toLowerCase()}, chosen one at a time.`, items: all.filter(p => p.occasion.includes(arg))};
     case "price": { const [lo, hi] = arg.split("-").map(Number); return {title: hi > 99999 ? `${money(lo)} & above` : lo === 0 ? `Under ${money(hi + 1)}` : `${money(lo)} – ${money(hi)}`, crumb: "Shop by price", items: all.filter(p => p.price >= lo && p.price <= hi)}; }
     case "size": return {title: `Size ${arg.replace(" / ", "/")}`, crumb: "Shop by size", items: all.filter(p => p.sizes.some(s => s.label === arg && s.available > 0))};
@@ -82,7 +99,7 @@ function showPage(html) { home.hidden = true; pageView.hidden = false; pageView.
 function showHome() { pageView.hidden = true; pageView.innerHTML = ""; home.hidden = false; }
 
 function renderHome() {
-  const ps = state.products;
+  const ps = state.products.filter(p => !isOut(p));
   const arrivals = ps.filter(p => has(p, "new") && p.imageUrls.length).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   $("#newArrivals").innerHTML = arrivals.filter(p => p.category !== "Sarees").slice(0, 6).map(p => card(p, {sub: false, offer: false})).join("");
   $("#windowItems").innerHTML = ps.filter(p => has(p, "window")).slice(0, 4).map(p => card(p, {sub: false})).join("");
@@ -100,10 +117,25 @@ function renderHome() {
     // desktop: feature first, then copy; mobile: copy first then cards
     if (matchMedia("(min-width: 960px)").matches) $("#sareeEdit").prepend($("#sareeEdit .feature"));
   }
+  if (api.source === "feed") renderTaxonomy(ps);
   syncCounts();
 }
+// With a live feed, the style and occasion tiles and menu links are built from the
+// values Sharanya tags in BoutiqueOS, so new styles appear without a code change.
+function renderTaxonomy(ps) {
+  const count = (key) => { const m = new Map(); ps.forEach(p => (p[key] || []).forEach(v => m.set(v, (m.get(v) || 0) + 1))); return [...m.entries()].sort((a, b) => b[1] - a[1]).map(([v]) => v); };
+  const cover = (fn) => ps.find(p => fn(p) && p.images?.length);
+  const tile = (href, p, label, cls = "tile") => `<a href="${href}" class="${cls}">${p ? photo(p, 0, "", false, "(min-width: 960px) 25vw, 50vw") : `<span class="ph ph-empty"></span>`}<b>${esc(label.toUpperCase())}</b></a>`;
+  const styles = count("styles").slice(0, 7);
+  const kids = cover(p => p.category === "Kids");
+  $("#styleTiles").innerHTML = styles.map(s => tile(`#shop/style/${encodeURIComponent(s)}`, cover(p => p.styles.includes(s)), STYLE_NAME(s))).join("")
+    + (kids ? tile("#shop/kids", kids, "Kids’ ethnic sets") : "");
+  const occasions = count("occasion").slice(0, 4);
+  $("#occasionTiles").innerHTML = occasions.map(o => tile(`#shop/occasion/${encodeURIComponent(o)}`, cover(p => p.occasion.includes(o)), o, "")).join("");
+  $("#megaOccasions").innerHTML = `<b>BY OCCASION</b>${occasions.map(o => `<a href="#shop/occasion/${encodeURIComponent(o)}">${esc(o)}</a>`).join("")}`;
+}
 function renderLoved(filter) {
-  const loved = state.products.filter(p => has(p, "bestseller") || has(p, "last_piece") || has(p, "handpicked"))
+  const loved = state.products.filter(p => !isOut(p)).filter(p => has(p, "bestseller") || has(p, "last_piece") || has(p, "handpicked"))
     .filter(p => filter === "all" || p.category === filter)
     .sort((a, b) => Number(has(b, "bestseller")) - Number(has(a, "bestseller"))).slice(0, 4);
   $("#mostLoved").innerHTML = loved.length ? loved.map(p => card(p)).join("") : `<p class="muted">More coming to the studio soon.</p>`;
@@ -111,13 +143,13 @@ function renderLoved(filter) {
 
 function renderShop(path) {
   const c = collection(path);
-  const styles = [...new Set(c.items.flatMap(p => p.styles || []))].filter(s => STYLE_NAMES[s]);
-  const featured = c.items.filter(p => has(p, "handpicked") || has(p, "window"));
+  const styles = [...new Set(c.items.flatMap(p => p.styles || []))].sort((a, b) => STYLE_NAME(a).localeCompare(STYLE_NAME(b)));
+  const featured = c.items.filter(p => !isOut(p) && (has(p, "handpicked") || has(p, "window")));
   showPage(`<section class="wrap page">
     <nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${esc(c.crumb)}</nav>
     <h1 class="page-title">${esc(c.title)}</h1>
     ${c.intro ? `<p class="page-intro">${esc(c.intro)}</p>` : ""}
-    ${styles.length > 1 ? `<div class="chips shelf-chips" role="tablist" aria-label="Refine"><button class="chip on" data-refine="">All</button>${styles.map(s => `<button class="chip" data-refine="${esc(s)}">${esc(STYLE_NAMES[s])}</button>`).join("")}</div>` : ""}
+    ${styles.length > 1 ? `<div class="chips shelf-chips" role="tablist" aria-label="Refine"><button class="chip on" data-refine="">All</button>${styles.map(s => `<button class="chip" data-refine="${esc(s)}">${esc(STYLE_NAME(s))}</button>`).join("")}</div>` : ""}
     <div class="toolbar"><span class="count" id="shopCount">${c.items.length} piece${c.items.length === 1 ? "" : "s"}</span>
       <label>SORT <select id="shopSort"><option value="featured">Featured</option><option value="new">Newest</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label></div>
     ${featured.length >= 3 ? `<div class="shelf-row"><div class="shelf-head"><b>Sharanya’s shelf</b><span>arranged by Sharanya</span></div><div class="rail">${featured.slice(0, 8).map(p => card(p, {sub: false, offer: false})).join("")}</div><div class="shelf-plank" aria-hidden="true"></div></div>` : ""}
@@ -132,7 +164,7 @@ function renderShop(path) {
     if (sort === "low") list = [...list].sort((a, b) => a.price - b.price);
     if (sort === "high") list = [...list].sort((a, b) => b.price - a.price);
     if (sort === "featured") list = [...list].sort((a, b) => Number(!!b.imageUrls.length) - Number(!!a.imageUrls.length));
-    $("#shopGrid").innerHTML = list.map(p => card(p)).join("");
+    $("#shopGrid").innerHTML = inStockFirst(list).map(p => card(p)).join("");
     $("#shopCount").textContent = `${list.length} piece${list.length === 1 ? "" : "s"}`;
   };
   $("#shopSort").addEventListener("change", e => { sort = e.target.value; draw(); });
@@ -146,15 +178,15 @@ function renderProduct(id) {
   state.selectedSize = available(p).length === 1 ? available(p)[0].label : "";
   const saved = state.wishes.includes(p.id);
   const imgs = p.imageUrls.length ? p.imageUrls : [""];
-  const look = state.products.filter(x => x.id !== p.id && x.occasion.some(o => p.occasion.includes(o)) && x.category !== p.category && x.imageUrls.length).slice(0, 6);
-  const alike = state.products.filter(x => x.id !== p.id && ((x.styles || []).some(s => (p.styles || []).includes(s)) || x.subCategory === p.subCategory) && x.imageUrls.length).slice(0, 8);
+  const look = state.products.filter(x => x.id !== p.id && x.occasion.some(o => p.occasion.includes(o)) && x.category !== p.category && x.imageUrls.length && !isOut(x)).slice(0, 6);
+  const alike = state.products.filter(x => x.id !== p.id && ((x.styles || []).some(s => (p.styles || []).includes(s)) || x.subCategory === p.subCategory) && x.imageUrls.length && !isOut(x)).slice(0, 8);
   const sizeBtns = p.sizes.map(s => `<button class="size ${s.label === state.selectedSize ? "on" : ""}" data-size="${esc(s.label)}" ${s.available ? "" : "disabled"} aria-pressed="${s.label === state.selectedSize}">${esc(s.label.replace(" / ", "/"))}</button>`).join("");
   const stock = stockNote(p);
   showPage(`<section class="wrap page">
     <nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / <a href="#shop/${esc(Object.keys(CATS).find(k => CATS[k] === p.category) || "all")}">${esc(p.category)}</a> / ${esc(p.name)}</nav>
     <div class="pdp">
       <div>
-        <div class="pdp-gallery" id="pdpGallery">${imgs.map((_, i) => photo(p, i, i ? `${p.name}, detail ${i}` : `${p.name}, front`, i === 0)).join("")}</div>
+        <div class="pdp-gallery" id="pdpGallery">${imgs.map((_, i) => photo(p, i, i ? `${p.name}, detail ${i}` : `${p.name}, front`, i === 0, "(min-width: 960px) 45vw, 100vw")).join("")}</div>
         ${imgs.length > 1 ? `<div class="pdp-dots" id="pdpDots">${imgs.map((_, i) => `<span class="${i ? "" : "on"}"></span>`).join("")}</div>` : ""}
       </div>
       <div class="pdp-info">
@@ -174,7 +206,7 @@ function renderProduct(id) {
           <details><summary>FABRIC &amp; CARE</summary><p>Fabric: ${esc(p.fabric === "To confirm" ? "to be confirmed by the studio" : p.fabric)}. Gentle hand wash or dry clean; dry in shade.</p></details>
           <details><summary>SHIPPING &amp; RETURNS</summary><p>Ships from our KPHB studio in 2–4 working days, or pick up from the studio. Returns and exchanges follow our store policy.</p></details>
         </div>
-        <p class="pdp-meta">${esc(p.location)} · Tag ${esc(p.sku)}</p>
+        <p class="pdp-meta">${p.location ? `${esc(p.location)} · ` : ""}Tag ${esc(p.sku)}</p>
         ${look.length ? `<div><div class="mini-rail-title"><span>COMPLETE THE LOOK</span></div><div class="rail">${look.map(x => card(x, {sub: false, offer: false})).join("")}</div></div>` : ""}
         ${alike.length ? `<div><div class="mini-rail-title"><span><small>FEATURED IN ${esc(p.subCategory.toUpperCase())}</small>MORE LIKE THIS</span><a class="more" href="#shop/${(p.styles || [])[0] ? `style/${esc(p.styles[0])}` : "all"}">View all</a></div><div class="rail">${alike.map(x => card(x, {sub: false, offer: false})).join("")}</div></div>` : ""}
       </div>
@@ -223,7 +255,7 @@ function renderSearch(q) {
     <nav class="crumbs"><a href="#home">Home</a> / Search</nav>
     <h1 class="page-title">“${esc(q)}”</h1><p class="page-intro">${items.length} piece${items.length === 1 ? "" : "s"} found</p>
     <div class="chips shelf-chips">${["anarkali", "ajrakh", "silk", "kids", "pin-tuck", "saree"].map(s => `<a class="chip" href="#search/${s}">${s}</a>`).join("")}</div>
-    <div class="grid grid-4" style="margin-top:22px">${items.map(p => card(p)).join("")}</div>
+    <div class="grid grid-4" style="margin-top:22px">${inStockFirst(items).map(p => card(p)).join("")}</div>
     ${items.length ? "" : `<div class="empty"><p class="h">We don’t see that exact piece.</p><p>Sharanya may know where to look — ask on WhatsApp or book a video call.</p><button class="btn pri" data-action="book-call">Talk to Sharanya</button></div>`}
   </section>`);
 }
@@ -261,8 +293,19 @@ function syncCounts() {
   $$("[data-wish-count]").forEach(el => { el.textContent = state.wishes.length; el.hidden = !state.wishes.length; });
   store.set(CART, state.cart); store.set(WISH, state.wishes);
 }
+// A bag line whose size has sold since it was added (known from the feed or the live check).
+const lineGone = (line) => { const p = byId(line.productId); const s = p?.sizes.find(x => x.label === line.size); return !p || !s || s.available <= 0; };
+// Asks BoutiqueOS for live stock of everything in the bag; true when something changed.
+async function refreshBagStock() {
+  const ids = state.cart.map(l => l.productId);
+  const live = await api.checkAvailability(ids);
+  if (!live) return false;
+  const before = state.cart.map(lineGone).join();
+  ids.forEach(id => { const p = byId(id); if (p) api.applyAvailability(p, live[id]); });
+  return before !== state.cart.map(lineGone).join();
+}
 function totals() {
-  const rows = state.cart.map(line => ({line, p: byId(line.productId)})).filter(x => x.p);
+  const rows = state.cart.map(line => ({line, p: byId(line.productId)})).filter(x => x.p && !lineGone(x.line));
   const subtotal = rows.reduce((s, x) => s + x.p.price * x.line.quantity, 0);
   const count = rows.reduce((s, x) => s + x.line.quantity, 0);
   let discount = 0, label = "";
@@ -299,13 +342,17 @@ function closeDrawer() {
   document.body.classList.remove("no-scroll");
   lastFocus?.focus?.({preventScroll: true});
 }
-function openBag() {
+function openBag(checkStock = true) {
+  if (checkStock && state.cart.length) refreshBagStock().then(changed => { if (changed && overlay.classList.contains("open") && $("#drawerTitle")?.textContent.startsWith("Your Bag")) { toast("Some pieces have just sold in the studio."); openBag(false); } });
   const t = totals();
-  if (!t.rows.length) return openDrawer(`<h2 class="dt" id="drawerTitle">Your Bag</h2><div class="empty"><p class="h">Your bag is taking a little pause.</p><p>Find a piece that feels like you.</p><a class="btn pri" href="#shop/all">Explore the collection</a></div>`);
+  const gone = state.cart.filter(lineGone).map(line => ({line, p: byId(line.productId)}));
+  const goneHtml = gone.length ? `<div class="stack">${gone.map(({line, p}) => `<div class="bag-line is-gone">${p ? photo(p) : ""}<div><span class="card-name">${esc(p?.name || "This piece")}</span><span class="meta">${esc(line.size.replace(" / ", "/"))} · no longer available</span><span class="acts"><button class="text-link" data-action="remove" data-id="${esc(line.productId)}" data-size="${esc(line.size)}">Remove</button></span></div></div>`).join("")}</div>` : "";
+  if (!t.rows.length) return openDrawer(`<h2 class="dt" id="drawerTitle">Your Bag</h2>${goneHtml}<div class="empty"><p class="h">Your bag is taking a little pause.</p><p>Find a piece that feels like you.</p><a class="btn pri" href="#shop/all">Explore the collection</a></div>`);
   const nudge = state.offerActive ? (t.count >= 3 ? "<b>Buy 2, get 1 free applied</b> — your lowest-priced piece is free" : `<b>Anniversary offer applied</b> — 20% off${t.count === 2 ? " · add 1 more for Buy 2, get 1 free" : ""}`) : t.shipping === 0 ? "<b>Free shipping</b> on this order" : `Add ${money(2999 - t.total)} more for <b>free shipping</b>`;
   openDrawer(`<h2 class="dt" id="drawerTitle">Your Bag (${t.count})</h2>
     <div class="stack">
       <div class="offer-box">${nudge}</div>
+      ${goneHtml}
       ${t.rows.map(({line, p}) => `<div class="bag-line">${photo(p)}<div><a class="card-name" href="#product/${esc(p.id)}">${esc(p.name)}</a><span class="meta">${esc(line.size.replace(" / ", "/"))} · ${esc(p.sku)}</span><b>${money(p.price)}</b>
         <span class="acts"><button class="text-link" data-action="bag-to-wish" data-id="${esc(p.id)}" data-size="${esc(line.size)}">Move to wishlist</button><button class="text-link" data-action="remove" data-id="${esc(p.id)}" data-size="${esc(line.size)}">Remove</button></span></div></div>`).join("")}
       <div class="totals"><div><span>Subtotal</span><span>${money(t.subtotal)}</span></div>
@@ -518,7 +565,12 @@ document.addEventListener("submit", async e => {
   if (f.id === "checkoutForm") {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(f));
-    const result = await api.createOrder({customer: {name: d.name, mobile: d.mobile, gstin: d.gstin}, delivery: f.dataset.delivery, paymentMethod: f.dataset.pay, address: f.dataset.delivery === "ship" ? {line1: d.line1, city: d.city, pinCode: d.pinCode} : undefined, lines: state.cart});
+    const payBtn = $("#payBtn"); payBtn.disabled = true;
+    await refreshBagStock();
+    if (state.cart.some(lineGone)) { toast("A piece in your bag has just sold. Please review your bag."); openBag(false); return; }
+    let result;
+    try { result = await api.createOrder({customer: {name: d.name, mobile: d.mobile, gstin: d.gstin}, delivery: f.dataset.delivery, paymentMethod: f.dataset.pay, address: f.dataset.delivery === "ship" ? {line1: d.line1, city: d.city, pinCode: d.pinCode} : undefined, lines: state.cart}); }
+    catch { payBtn.disabled = false; toast("We couldn’t place the order — please try again or message us on WhatsApp."); return; }
     state.cart = []; syncCounts();
     openDrawer(`<div class="done"><span class="tick">✓</span><h2 class="dt" id="drawerTitle" style="padding:0">Thank you!</h2><p>Order <b>${esc(result.orderNumber)}</b> is recorded.<br/>${esc(result.message || "")}</p><a class="btn pri full" href="#home">Continue shopping</a></div>`);
   }

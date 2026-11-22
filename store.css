@@ -93,6 +93,15 @@ body.no-scroll { overflow: hidden; }
     repeating-linear-gradient(135deg, rgba(255,255,255,.06) 0 2px, transparent 2px 9px),
     linear-gradient(180deg, transparent 40%, rgba(20,14,12,.25)); }
 .ph img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
+/* Feed photos: the blurred placeholder and dominant colour show while the photo
+   loads; the focal point decides the crop; landscape photos are shown whole. */
+.ph.ph-feed { background-image: var(--lqip, none); background-size: cover; background-position: var(--pos, 50% 40%); }
+.ph picture { display: contents; }
+.ph-feed img { object-position: var(--pos, 50% 40%); }
+.ph-feed.ph-contain img { object-fit: contain; }
+.ph-feed.ph-contain { background-image: none; }
+.ph.ph-feed.ph-empty::after { content: none; }
+.card.is-out .card-media .ph img { filter: grayscale(.6) opacity(.75); }
 .ph.ph-empty::after { content: "S"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 500 clamp(28px, 4vw, 56px) var(--serif); color: rgba(255,253,249,.5); letter-spacing: .1em; }
 .ph.circle.ph-empty::after { font-size: 22px; }
 .ph > i { position: absolute; inset: auto 0 0 0; padding: 6px; font: 400 11px var(--sans); color: var(--cream); text-align: center; }
@@ -436,6 +445,8 @@ body { --tabbar: calc(56px + env(safe-area-inset-bottom, 0px)); }
 .seg button.on { background: var(--ink); color: #fff; }
 .choice-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; margin-bottom: 8px; display: block; }
 .bag-line { display: flex; gap: 12px; border-bottom: 1px solid var(--stone); padding-bottom: 12px; }
+.bag-line.is-gone { opacity: .6; }
+.bag-line.is-gone .meta { color: var(--maroon); }
 .bag-line .ph { flex: 0 0 84px; width: 84px; height: 112px; }
 .bag-line > div { display: flex; flex-direction: column; gap: 3px; font-size: 13px; flex: 1; min-width: 0; }
 .bag-line .meta { color: var(--muted); font-size: 12px; }
